@@ -9,10 +9,12 @@ from statannot import add_stat_annotation
 
 pd.options.mode.chained_assignment = None  # default='warn'
 
+
 # scalling factors for physical units
 um_per_pixel = 0.117
 frame_duration = 2  # in seconds
 minimum_frames = 20  # Minimum number of frames a track must be present
+
 
 def calculate_step_sizes(csv_file_path):
     dtype_dict = {
@@ -34,7 +36,9 @@ def calculate_step_sizes(csv_file_path):
 
     # Filter out tracks with less than minimum_frames frames
     track_counts = df["TRACK_ID"].value_counts()
-    valid_tracks = track_counts[(track_counts >= minimum_frames) & (track_counts <= 190)].index
+    valid_tracks = track_counts[
+        (track_counts >= minimum_frames) & (track_counts <= 190)
+    ].index
     df = df[df["TRACK_ID"].isin(valid_tracks)]
 
     all_step_sizes = []
@@ -59,13 +63,21 @@ def calculate_step_sizes(csv_file_path):
 
     return all_step_sizes
 
+
 def calculate_fraction_step_sizes_greater_than_0_5(all_step_sizes):
-    fraction_gt_0_5 = np.sum(np.array(all_step_sizes) > 0.5) / len(all_step_sizes) if all_step_sizes else 0
+    fraction_gt_0_5 = (
+        np.sum(np.array(all_step_sizes) > 0.5) / len(all_step_sizes)
+        if all_step_sizes
+        else 0
+    )
     return fraction_gt_0_5
+
 
 def process_csv_files_condition(csv_files, condition_label):
     condition_fractions = {}
-    for csv_file in track(csv_files, description=f"Processing CSV files for {condition_label}"):
+    for csv_file in track(
+        csv_files, description=f"Processing CSV files for {condition_label}"
+    ):
         step_sizes = calculate_step_sizes(csv_file)
         fraction_gt_0_5 = calculate_fraction_step_sizes_greater_than_0_5(step_sizes)
         filename = os.path.basename(csv_file)
@@ -75,13 +87,16 @@ def process_csv_files_condition(csv_files, condition_label):
 
 # Select the CSV files for the three experiments
 csv_files_1 = filedialog.askopenfilenames(
-    title="Select CSV Files for No drug_2x", filetypes=(("CSV files", "*.csv"), ("All files", "*.*"))
+    title="Select CSV Files for No drug_2x",
+    filetypes=(("CSV files", "*.csv"), ("All files", "*.*")),
 )
 csv_files_2 = filedialog.askopenfilenames(
-    title="Select CSV Files for LatrunculinA_30 mins", filetypes=(("CSV files", "*.csv"), ("All files", "*.*"))
+    title="Select CSV Files for LatrunculinA_30 mins",
+    filetypes=(("CSV files", "*.csv"), ("All files", "*.*")),
 )
 csv_files_3 = filedialog.askopenfilenames(
-    title="Select CSV Files for LatrunculinA_60 mins", filetypes=(("CSV files", "*.csv"), ("All files", "*.*"))
+    title="Select CSV Files for LatrunculinA_60 mins",
+    filetypes=(("CSV files", "*.csv"), ("All files", "*.*")),
 )
 
 # Calculate step sizes for the three experiments
@@ -116,8 +131,8 @@ all_fractions = {
 
 dataframes = []
 for label, fractions in all_fractions.items():
-    df = pd.DataFrame(list(fractions.items()), columns=['filename', 'fraction_gt_0_5'])
-    df['condition'] = label
+    df = pd.DataFrame(list(fractions.items()), columns=["filename", "fraction_gt_0_5"])
+    df["condition"] = label
     dataframes.append(df)
 # Final DataFrame combining all conditions
 final_dataframe = pd.concat(dataframes, ignore_index=True)
@@ -130,12 +145,12 @@ final_dataframe.to_csv(csv_file_path, index=False)
 
 plt.figure(figsize=(4, 3), dpi=300)
 ax = sns.barplot(
-    data=final_dataframe, 
-    x="condition", 
-    y="fraction_gt_0_5", 
+    data=final_dataframe,
+    x="condition",
+    y="fraction_gt_0_5",
     order=final_dataframe["condition"].unique(),
-    ci="sd", 
-    capsize=0.1 
+    ci="sd",
+    capsize=0.1,
 )
 
 sns.stripplot(
@@ -144,7 +159,7 @@ sns.stripplot(
     y="fraction_gt_0_5",
     color="0.7",
     size=3,
-    order=final_dataframe["condition"].unique()
+    order=final_dataframe["condition"].unique(),
 )
 
 box_pairs = [
@@ -159,14 +174,14 @@ test_stats = add_stat_annotation(
     x="condition",
     y="fraction_gt_0_5",
     box_pairs=box_pairs,
-    test='t-test_welch',
+    test="t-test_welch",
     comparisons_correction=None,
-    text_format='star',
-    loc='inside',
-    verbose=2
+    text_format="star",
+    loc="inside",
+    verbose=2,
 )
 
-plt.xticks(rotation=45, ha='right', fontsize=6)
+plt.xticks(rotation=45, ha="right", fontsize=6)
 plt.yticks(fontsize=6)
 plt.ylabel("Fraction of step sizes > 0.5 um", fontsize=5)
 plt.ylim(0, None)
