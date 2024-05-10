@@ -12,6 +12,7 @@ um_per_pixel = 0.117
 frame_duration = 2  # in seconds
 minimum_frames = 20  # Minimum number of frames a track must be present
 
+
 def calculate_step_sizes(csv_file_path):
     dtype_dict = {
         "POSITION_T": "float64",
@@ -32,7 +33,9 @@ def calculate_step_sizes(csv_file_path):
 
     # Filter out tracks with less than minimum_frames frames
     track_counts = df["TRACK_ID"].value_counts()
-    valid_tracks = track_counts[(track_counts >= minimum_frames) & (track_counts <= 190)].index
+    valid_tracks = track_counts[
+        (track_counts >= minimum_frames) & (track_counts <= 190)
+    ].index
     df = df[df["TRACK_ID"].isin(valid_tracks)]
 
     all_step_sizes = []
@@ -57,19 +60,23 @@ def calculate_step_sizes(csv_file_path):
 
     return all_step_sizes
 
+
 # Create a Tkinter root window
 # root = tk.Tk()
 # root.withdraw()  # Hide the root window
 
 # Select the CSV files for the three experiments
 csv_files_1 = filedialog.askopenfilenames(
-    title="Select CSV Files for No drug_2x", filetypes=(("CSV files", "*.csv"), ("All files", "*.*"))
+    title="Select CSV Files for No drug_2x",
+    filetypes=(("CSV files", "*.csv"), ("All files", "*.*")),
 )
 csv_files_2 = filedialog.askopenfilenames(
-    title="Select CSV Files for LatrunculinA_30 mins", filetypes=(("CSV files", "*.csv"), ("All files", "*.*"))
+    title="Select CSV Files for LatrunculinA_30 mins",
+    filetypes=(("CSV files", "*.csv"), ("All files", "*.*")),
 )
 csv_files_3 = filedialog.askopenfilenames(
-    title="Select CSV Files for LatrunculinA_60 mins", filetypes=(("CSV files", "*.csv"), ("All files", "*.*"))
+    title="Select CSV Files for LatrunculinA_60 mins",
+    filetypes=(("CSV files", "*.csv"), ("All files", "*.*")),
 )
 
 # Calculate step sizes for the three experiments
