@@ -104,53 +104,54 @@ data = pd.concat(
     ],
     ignore_index=True,
 )
+data.to_csv("test.csv", index=False)
 
-# Generate CDF plot
-plt.figure(figsize=(4, 3))
-palette = ["skyblue", "orange", "green"]
+# # Generate CDF plot
+# plt.figure(figsize=(4, 3))
+# palette = ["skyblue", "orange", "green"]
 
-ax = sns.histplot(
-    data=data,
-    x="step_sizes",
-    hue="label",
-    palette=palette,
-    bins=17,
-    binrange=(0, 0.8),
-    stat="probability",
-    common_norm=False,
-    lw=2,
-    element="step",
-    fill=False,
-    cumulative=False,
-)
+# ax = sns.histplot(
+#     data=data,
+#     x="step_sizes",
+#     hue="label",
+#     palette=palette,
+#     bins=17,
+#     binrange=(0, 0.8),
+#     stat="probability",
+#     common_norm=False,
+#     lw=2,
+#     element="step",
+#     fill=False,
+#     cumulative=False,
+# )
 
-plt.xlim(0, 0.8)
-sns.move_legend(
-    ax,
-    4,
-    title=None,
-    frameon=False,
-    fontsize=18,
-)
-plt.xlabel("Step Size ($\mu$m)", fontsize=18)
-plt.ylabel("Probabilty", fontsize=18)
-plt.gca().spines[:].set_linewidth(1)
-plt.gca().tick_params(
-    axis="both",
-    which="major",
-    labelsize=18,
-    direction="in",
-    bottom=True,
-    left=True,
-    length=5,
-    width=1,
-)
-plt.gca().set_axisbelow(False)
-plt.gca().tick_params(axis="both", which="major", labelsize=18)
-plt.savefig(
-    "step-cdf.png",
-    format="png",
-    bbox_inches="tight",
-    dpi=300,
-)
-plt.show()
+# plt.xlim(0, 0.8)
+# sns.move_legend(
+#     ax,
+#     4,
+#     title=None,
+#     frameon=False,
+#     fontsize=18,
+# )
+# plt.xlabel("Step Size ($\mu$m)", fontsize=18)
+# plt.ylabel("Probabilty", fontsize=18)
+# plt.gca().spines[:].set_linewidth(1)
+# plt.gca().tick_params(
+#     axis="both",
+#     which="major",
+#     labelsize=18,
+#     direction="in",
+#     bottom=True,
+#     left=True,
+#     length=5,
+#     width=1,
+# )
+# plt.gca().set_axisbelow(False)
+# plt.gca().tick_params(axis="both", which="major", labelsize=18)
+# plt.savefig(
+#     "step-cdf.png",
+#     format="png",
+#     bbox_inches="tight",
+#     dpi=300,
+# )
+# plt.show()
