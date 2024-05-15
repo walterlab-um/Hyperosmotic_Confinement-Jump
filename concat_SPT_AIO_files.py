@@ -6,7 +6,9 @@ from rich.progress import track
 from tkinter import filedialog as fd
 
 print("Choose all SPT_results_AIO_xxxxx.csv files within the same condition:")
-lst_path_data = list(fd.askopenfilenames())
+lst_path_data = list(
+    fd.askopenfilenames(filetypes=(("CSV files", "*.csv"), ("All files", "*.*")))
+)
 folder_data = dirname(lst_path_data[0])
 os.chdir(folder_data)
 lst_df = []
