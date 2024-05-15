@@ -102,7 +102,7 @@ def process_csv_and_add_alpha(csv_file, window_size, um_per_pixel, s_per_frame):
     save_path = os.path.dirname(csv_file)
     base_name = os.path.basename(csv_file)
     name, ext = os.path.splitext(base_name)
-    output_file_name = f"{name}_alpha_w{window_size}{ext}"
+    output_file_name = f"{name}_alpha_and_D_w{window_size}{ext}"
     output_file_path = os.path.join(save_path, output_file_name)
 
     # Read the CSV file
