@@ -61,8 +61,8 @@ def calc_alpha(MSDs, lags):
 # Function to calculate alpha values for a given set of CSV files with sliding window
 def calculate_alpha_for_track(df_track, um_per_pixel, s_per_frame, window_size):
     # Initialize the new columns for the track with NaN
-    df_track["alpha"] = np.nan
     df_track["R2"] = np.nan
+    df_track["alpha"] = np.nan
     df_track["D"] = np.nan
     df_track["POSITION_X"] *= um_per_pixel
     df_track["POSITION_Y"] *= um_per_pixel
@@ -83,15 +83,16 @@ def calculate_alpha_for_track(df_track, um_per_pixel, s_per_frame, window_size):
             # Skip this window since it contains invalid MSD values
             continue
 
-        alpha, r_squared, D = calc_alpha(
+        alpha, r_value, D = calc_alpha(
             window_msd, np.arange(1, number_lag + 1) * s_per_frame
         )
-        if not np.isnan(alpha):
+        r_squared = r_value**2
+        if not np.isnan(alpha) and r_squared > 0.9:
             middle_frame_index = (
                 start + window_size // 2
             )  # Integer division to get middle index
-            df_track.at[df_track.index[middle_frame_index], "alpha"] = alpha
             df_track.at[df_track.index[middle_frame_index], "R2"] = r_squared
+            df_track.at[df_track.index[middle_frame_index], "alpha"] = alpha
             df_track.at[df_track.index[middle_frame_index], "D"] = D
 
     return df_track
