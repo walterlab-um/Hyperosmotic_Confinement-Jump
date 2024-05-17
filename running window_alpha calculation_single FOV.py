@@ -108,10 +108,6 @@ def process_csv_and_add_alpha(csv_file, window_size, um_per_pixel, s_per_frame):
     # Read the CSV file
     df = pd.read_csv(csv_file)
 
-    # Preprocess position columns
-    df["POSITION_X"] *= um_per_pixel
-    df["POSITION_Y"] *= um_per_pixel
-
     # Process each track and calculate alphas
     tracks = df.groupby("TRACK_ID")
     alpha_df_list = []
