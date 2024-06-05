@@ -7,7 +7,9 @@ from rich.progress import track
 
 
 print("Please choose the csv file(s) from TrackMate exported tracks:")
-lst_files = list(fd.askopenfilenames())
+lst_files = list(
+    fd.askopenfilenames(filetypes=(("CSV files", "*.csv"), ("All files", "*.*")))
+)
 
 for fpath in track(lst_files):
     df_in = pd.read_csv(
