@@ -5,7 +5,6 @@ from rich.progress import track
 
 # Input csv files are exported from TrackMate as "tracks" or "spots"
 
-
 print("Please choose the csv file(s) from TrackMate exported tracks:")
 lst_files = list(
     fd.askopenfilenames(filetypes=(("CSV files", "*.csv"), ("All files", "*.*")))
