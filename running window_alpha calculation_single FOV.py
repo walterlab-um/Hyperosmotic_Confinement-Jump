@@ -126,7 +126,6 @@ def process_csv_and_add_alpha(csv_file, window_size, um_per_pixel, s_per_frame):
     return output_file_path
 
 
-# Example usage:
 # Select CSV files for each experiment
 input_csv_file = filedialog.askopenfilename(
     title="Select CSV File",
