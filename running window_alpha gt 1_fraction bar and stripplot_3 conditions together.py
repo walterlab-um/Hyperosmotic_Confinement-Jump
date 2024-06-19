@@ -5,6 +5,7 @@ from tkinter import filedialog
 import matplotlib.pyplot as plt
 import seaborn as sns
 import os
+from math import ceil
 from rich.progress import track
 from statannot import add_stat_annotation
 
@@ -13,10 +14,7 @@ pd.options.mode.chained_assignment = None
 
 # Scaling factors
 um_per_pixel = 0.117
-print("Please enter the seconds per frame for the video:")
-s_per_frame = float(input())
-
-# Initialization of window_size
+s_per_frame = 2
 window_size = 5
 
 # Specify column data types
@@ -79,20 +77,27 @@ def calculate_fraction_alpha_gt_threshold(csv_file):
             x = df_track["POSITION_X"].to_numpy()
             y = df_track["POSITION_Y"].to_numpy()
 
-            step_size = 3
+            step_size = 1
             for start in range(0, len(x) - window_size + 1, step_size):
                 end = start + window_size
+                number_lag = ceil(window_size / 2)
+                if number_lag < 3:
+                    number_lag = 3
                 window_msd = calc_MSD_NonPhysUnit(
-                    df_track.iloc[start:end], np.arange(1, window_size + 1)
+                    df_track.iloc[start:end], np.arange(1, number_lag + 1)
                 )
+                if np.sum(window_msd <= 0) > 0:
+                    alpha_values.append(alpha)
+                    continue
+
                 alpha = calc_alpha(
-                    window_msd, np.arange(1, window_size + 1) * s_per_frame
+                    window_msd, np.arange(1, number_lag + 1) * s_per_frame
                 )
                 if not np.isnan(alpha):
                     alpha_values.append(alpha)
 
         fraction_alpha = (
-            sum(a > 2 for a in alpha_values) / len(alpha_values)
+            sum(a > 1.5 for a in alpha_values) / len(alpha_values)
             if alpha_values
             else None
         )
@@ -120,11 +125,11 @@ csv_files_1 = filedialog.askopenfilenames(
     filetypes=(("CSV files", "*.csv"), ("All files", "*.*")),
 )
 csv_files_2 = filedialog.askopenfilenames(
-    title="Select CSV Files for Nocodazole_30 mins",
+    title="Select CSV Files for LatrunculinA_30 mins",
     filetypes=(("CSV files", "*.csv"), ("All files", "*.*")),
 )
 csv_files_3 = filedialog.askopenfilenames(
-    title="Select CSV Files for Nocodazole_60 mins",
+    title="Select CSV Files for LatrunculinA_60 mins",
     filetypes=(("CSV files", "*.csv"), ("All files", "*.*")),
 )
 
@@ -136,13 +141,13 @@ fractions_3 = process_condition_csv_files(csv_files_3)
 # Combine all the fractions into one dictionary keyed by condition label
 all_fractions = {
     "No drug_2x": fractions_1,
-    "Nocodazole_30 mins": fractions_2,
-    "Nocodazole_60 mins": fractions_3,
+    "LatrunculinA_30 mins": fractions_2,
+    "LatrunculinA_60 mins": fractions_3,
 }
 
 label1 = "No drug_2x"
-label2 = "Nocodazole_30 mins"
-label3 = "Nocodazole_60 mins"
+label2 = "LatrunculinA_30 mins"
+label3 = "LatrunculinA_60 mins"
 
 # Convert the dictionaries to dataframes
 fractions_df1 = pd.DataFrame(
@@ -165,9 +170,7 @@ data = pd.concat([fractions_df1, fractions_df2, fractions_df3], ignore_index=Tru
 
 # Save path (ensure this directory exists and you have write permissions)
 save_path = r"Z:\Bisal_Halder_turbo\PROCESSED_DATA\Trial_analysis"
-csv_file_path = os.path.join(
-    save_path, "alpha_Nocodazole_window5_trackcount500_alpha gt 2.csv"
-)
+csv_file_path = os.path.join(save_path, "alpha_LatrunculinA_window5_alpha.csv")
 data.to_csv(csv_file_path, index=False)
 
 plt.figure(figsize=(4, 3), dpi=300)
@@ -190,9 +193,9 @@ sns.stripplot(
 )
 
 box_pairs = [
-    ("No drug_2x", "Nocodazole_30 mins"),
-    ("No drug_2x", "Nocodazole_60 mins"),
-    ("Nocodazole_30 mins", "Nocodazole_60 mins"),
+    ("No drug_2x", "LatrunculinA_30 mins"),
+    ("No drug_2x", "LatrunculinA_60 mins"),
+    ("LatrunculinA_30 mins", "LatrunculinA_60 mins"),
 ]
 
 test_stats = add_stat_annotation(
@@ -210,10 +213,10 @@ test_stats = add_stat_annotation(
 
 plt.xticks(rotation=45, ha="right", fontsize=6)
 plt.yticks(fontsize=6)
-plt.ylabel("Fraction of alpha values > 2", fontsize=5)
+plt.ylabel("Fraction of alpha values > 1.5", fontsize=5)
 plt.xlabel("")
 plt.ylim(0, None)
 plt.grid(False)
 plt.tight_layout()
-plt.savefig("fraction_bar_plot.png", dpi=300, format="png")
+# plt.savefig("fraction_bar_plot.png", dpi=300, format="png")
 plt.show()
