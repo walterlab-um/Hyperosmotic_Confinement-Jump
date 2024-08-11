@@ -24,7 +24,7 @@ print(
 )
 
 
-print("Choose the RNA track csv files for processing:")
+print("Choose the track csv files for processing:")
 lst_fpath = list(fd.askopenfilenames())
 
 
