@@ -11,7 +11,7 @@ pd.options.mode.chained_assignment = None
 
 um_per_pixel = 0.117
 s_per_frame = 2
-window_size = 5
+window_size = 20
 dtype_dict = {
     "t": "float64",
     "x": "float64",
