@@ -21,7 +21,8 @@ for fname in track(lst_files):
     video_odd = np.delete(deepcopy(video), frames_even, 0)
     video_even = np.delete(deepcopy(video), frames_odd, 0)
 
-    video_odd_modified = video_odd - video_even
+    video_odd_modified = video_odd - 0.95 * (video_even)
+    video_odd_modified = video_odd_modified.astype(np.float32)
 
     imwrite(
         fname.strip(".tif") + "-odd_modified.tif",
