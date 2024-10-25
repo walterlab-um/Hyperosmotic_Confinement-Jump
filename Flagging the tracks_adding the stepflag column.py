@@ -1,7 +1,6 @@
 import numpy as np
 import pandas as pd
 from tkinter import filedialog
-import os
 from copy import deepcopy
 from rich.progress import track
 
@@ -9,7 +8,7 @@ from rich.progress import track
 consecutive_window = 2
 threshold_alpha = 1
 threshold_D = 0.10  # um2/s
-threshold_R2 = 0.5
+threshold_R2 = 0.6
 threshold_step_size = 2  # pixels
 disp_threshold = 5
 
@@ -39,13 +38,13 @@ def flag_tracks(df):
     for track_id in track(trackIDs, description="Processing tracks..."):
         track_data = df[df["trackID"] == track_id].reset_index(drop=True)
         step_flags_pertrack = np.repeat(False, track_data.shape[0])
-        high_alpha = track_data["alpha"] > threshold_alpha
-        ranges = find_consecutive_true_ranges(high_alpha)
+        high_step_size = track_data["step_sizes"] > threshold_step_size
+        ranges = find_consecutive_true_ranges(high_step_size)
         for start, end in ranges:
             if end - start + 1 >= consecutive_window:
                 mean_D = np.mean(track_data["D"][start : end + 1])
                 mean_R2 = np.mean(track_data["R2"][start : end + 1])
-                mean_stepsize = np.mean(track_data["step_sizes"][start : end + 1])
+                mean_alpha = np.mean(track_data["alpha"][start : end + 1])
                 x_start = track_data["x"][start]
                 x_end = track_data["x"][end]
                 y_start = track_data["y"][start]
@@ -54,7 +53,7 @@ def flag_tracks(df):
                 if (
                     mean_D > threshold_D
                     and mean_R2 > threshold_R2
-                    and mean_stepsize > threshold_step_size
+                    and mean_alpha > threshold_alpha
                     and disp > disp_threshold
                 ):
                     track_flags[track_id] = True
