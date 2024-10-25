@@ -46,9 +46,7 @@ csv_file_path = filedialog.askopenfilename(
 )
 
 
-cell_boundary_folder = filedialog.askdirectory(
-    title="Select folder containing cell boundary files"
-)
+cell_boundary_folder = r"Z:\Bisal_Halder_turbo\PROCESSED_DATA\Impact_of_cytoskeleton_on_HOPS_condensates\no_drug\Analysed Data\1x\cell boundary coordinates"
 
 
 if csv_file_path and cell_boundary_folder:
