@@ -9,8 +9,8 @@ consecutive_window = 2
 threshold_alpha = 1
 threshold_D = 0.10  # um2/s
 threshold_R2 = 0.6
-threshold_step_size = 2  # pixels
-disp_threshold = 5
+threshold_step_size = 2  # pixel
+disp_threshold = 0.585
 
 
 def find_consecutive_true_ranges(bool_array):
@@ -42,8 +42,8 @@ def flag_tracks(df):
         ranges = find_consecutive_true_ranges(high_step_size)
         for start, end in ranges:
             if end - start + 1 >= consecutive_window:
-                mean_D = np.mean(track_data["D"][start : end + 1])
-                mean_R2 = np.mean(track_data["R2"][start : end + 1])
+                mean_D = np.mean(track_data["D_loglog"][start : end + 1])
+                mean_R2 = np.mean(track_data["R2_loglog"][start : end + 1])
                 mean_alpha = np.mean(track_data["alpha"][start : end + 1])
                 x_start = track_data["x"][start]
                 x_end = track_data["x"][end]
