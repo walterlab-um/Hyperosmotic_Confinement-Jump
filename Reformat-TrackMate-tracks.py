@@ -32,6 +32,7 @@ for fpath in track(lst_files):
             "SNR_CH1",
         ],
         dtype=float,
+        encoding="latin1",
     )
     mapper = {
         "ID": "spotID",
