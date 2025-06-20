@@ -42,7 +42,6 @@ df["y"] *= um_per_pixel
 
 
 def calc_MSD_NonPhysUnit(track_data, lags):
-
     Xs = track_data["x"].to_numpy()
     Ys = track_data["y"].to_numpy()
 
@@ -56,33 +55,43 @@ def calc_MSD_NonPhysUnit(track_data, lags):
     return np.array(MSDs, dtype=float)
 
 
-def calc_alpha(MSDs, lags):
-
+def calc_alpha_and_diffusion(MSDs, lags):
     valid_indices = ~np.isnan(MSDs)
     valid_MSDs = MSDs[valid_indices]
     valid_lags = lags[valid_indices]
 
+    # Log-log calculation
     log_lags = np.log10(valid_lags)
     log_MSDs = np.log10(valid_MSDs)
+    slope_loglog, intercept_loglog, r_value_loglog, _, _ = stats.linregress(
+        log_lags, log_MSDs
+    )
 
-    slope, intercept, r_value, p_value, std_error = stats.linregress(log_lags, log_MSDs)
+    alpha = slope_loglog
+    diffusion_coefficient_loglog = (1 / 4) * (10**intercept_loglog)
+    r_squared_loglog = r_value_loglog**2
 
-    alpha = slope
-    diffusion_coefficient = (1 / 4) * (10**intercept)
-    r_squared = r_value**2
+    # Linear calculation
+    slope_linear, _, r_value_linear, _, _ = stats.linregress(valid_lags, valid_MSDs)
+    diffusion_coefficient_linear = slope_linear / (8 / 3)  # um^2/s
+    r_squared_linear = r_value_linear**2
 
-    return alpha, r_squared, diffusion_coefficient
+    return (
+        alpha,
+        r_squared_loglog,
+        diffusion_coefficient_loglog,
+        r_squared_linear,
+        diffusion_coefficient_linear,
+    )
 
 
 def calculate_alpha_and_D_for_track(df_track, um_per_pixel, s_per_frame, window_size):
-
-    df_track["R2"] = np.nan
+    df_track["R2_loglog"] = np.nan
     df_track["alpha"] = np.nan
-    df_track["D"] = np.nan
+    df_track["D_loglog"] = np.nan
+    df_track["R2_linear"] = np.nan
+    df_track["D_linear"] = np.nan
 
-    # window_info = []
-
-    # Iterate through windows and update alpha for the middle frame
     step_size = 1
     for start in range(0, len(df_track) - window_size + 1, step_size):
         end = start + window_size
@@ -91,33 +100,28 @@ def calculate_alpha_and_D_for_track(df_track, um_per_pixel, s_per_frame, window_
         number_lag = ceil(window_size / 2)
         if number_lag < 3:
             number_lag = 3
-        window_msd = calc_MSD_NonPhysUnit(
-            df_track.iloc[start:end], np.arange(1, number_lag + 1)
-        )
+        window_msd = calc_MSD_NonPhysUnit(df_window, np.arange(1, number_lag + 1))
         if np.sum(window_msd <= 0) > 0:
             # Skip this window since it contains invalid MSD values
             continue
 
-        alpha, r_squared, D = calc_alpha(
-            window_msd, np.arange(1, number_lag + 1) * s_per_frame
+        alpha, r_squared_loglog, D_loglog, r_squared_linear, D_linear = (
+            calc_alpha_and_diffusion(
+                window_msd, np.arange(1, number_lag + 1) * s_per_frame
+            )
         )
-        # r_squared = r_value**2
+
         if not np.isnan(alpha):
             middle_frame_index = start + ceil(window_size / 2)
-            df_track.at[df_track.index[middle_frame_index], "R2"] = r_squared
+            df_track.at[df_track.index[middle_frame_index], "R2_loglog"] = (
+                r_squared_loglog
+            )
             df_track.at[df_track.index[middle_frame_index], "alpha"] = alpha
-            df_track.at[df_track.index[middle_frame_index], "D"] = D
-
-            # window_info.append(
-            #     {
-            #         "window_start_frame": df_window.iloc[0]["t"],
-            #         "window_end_frame": df_window.iloc[-1]["t"],
-            #         "alpha": alpha,
-            #         "R2": r_squared,
-            #         "D": D,
-            #         "lags": np.arange(1, number_lag + 1).tolist(),
-            #     }
-            # )
+            df_track.at[df_track.index[middle_frame_index], "D_loglog"] = D_loglog
+            df_track.at[df_track.index[middle_frame_index], "R2_linear"] = (
+                r_squared_linear
+            )
+            df_track.at[df_track.index[middle_frame_index], "D_linear"] = D_linear
 
     return df_track
 
@@ -125,12 +129,7 @@ def calculate_alpha_and_D_for_track(df_track, um_per_pixel, s_per_frame, window_
 def process_csv_and_add_alpha_and_D(
     csv_file_path, window_size, um_per_pixel, s_per_frame
 ):
-
     df = pd.read_csv(csv_file_path, dtype=dtype_dict)
-    # df["t"] *= s_per_frame
-    # df["x"] *= um_per_pixel
-    # df["y"] *= um_per_pixel
-
     processed_track_list = []
 
     grouped_tracks = df.groupby("trackID")
@@ -145,9 +144,11 @@ def process_csv_and_add_alpha_and_D(
                     "x",
                     "y",
                     "t",
-                    "R2",
+                    "R2_loglog",
                     "alpha",
-                    "D",
+                    "D_loglog",
+                    "R2_linear",
+                    "D_linear",
                 ]
             ]
         )
