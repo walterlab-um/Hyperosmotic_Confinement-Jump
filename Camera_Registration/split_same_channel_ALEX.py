@@ -6,7 +6,7 @@ from tkinter import filedialog as fd
 from copy import deepcopy
 from rich.progress import track
 
-print("Choose the tif files for channel alignment:")
+print("Choose the tif files for splitting frames:")
 lst_files = list(fd.askopenfilenames())
 
 #########################################
