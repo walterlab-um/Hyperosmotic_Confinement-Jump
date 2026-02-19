@@ -12,21 +12,32 @@ conda env create -f environment.yml
 Activate the spt conda environment before running any scripts
 conda activate spt
 
-A basic pipeline to analyze diffusion
+## A basic pipeline to analyze diffusion
+
 [optional] If dual-color SPT is needed, channel registration should be performed to align two videos from each channel, and scripts in folder "Camera_Registration" can be used.
 Filter out non-single molecule signals in the SMT videos using "bandpass_filter.py"
 Extract SMT trajectories using TrackMate (https://imagej.net/plugins/trackmate/)
 Export trajectories as csv files using "Export Tracks" or "Export Spots" function in TrackMate
 Calculate running-window MSD analysis from every single trajectory using the main processing script. The output includes:
+
 trackID
+
 list of time (s)
+
 list of x positions (µm)
+
 list of y positions (µm)
+
 R2_loglog (log-log MSD fit)
+
 alpha (anomalous diffusion exponent)
+
 D_loglog (log-log diffusion coefficient, µm²/s)
-R2_linear (linear MSD fit)  
+
+R2_linear (linear MSD fit) 
+
 D_linear (linear diffusion coefficient, µm²/s)
+
 Pooling all datasets from different dates of experiments under the same condition using concatenation scripts
 Classification of sub/super-diffusion and distribution plots using plotting scripts in "python_codes"
 
