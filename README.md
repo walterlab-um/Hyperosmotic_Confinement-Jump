@@ -1,8 +1,11 @@
-HOPS Condensate SPT during Hyperosmotic Stress
+## HOPS Condensate SPT during Hyperosmotic Stress
+
 This repository contains Python scripts to analyze single molecule tracking (SMT) of HOPS condensates formed by DCP1A during hyperosmotic stress, ER docking analysis, and GEMs accessibility mapping.
+
 Please consider to cite: "ER tethering and active transport govern condensate diffusion during hyperosmotic stress" (Genome Biology, 2026)
 
-Installation
+## Installation
+
 All prerequisites to run the scripts in this repository are specified in conda_environment-spt.yml
 A spt conda environment can be installed from the yml file by:
 conda env create -f environment.yml
