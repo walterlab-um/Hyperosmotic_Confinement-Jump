@@ -41,7 +41,5 @@ D_linear (linear diffusion coefficient, µm²/s)
 Pooling all datasets from different dates of experiments under the same condition using concatenation scripts
 Classification of sub/super-diffusion and distribution plots using plotting scripts in "python_codes"
 
-To analyze ER docking between condensates and ER structures, minimum distance analysis using "calculate_min_distances.py"
-
 ## License
 MIT License (LICENSE file).
