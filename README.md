@@ -2,7 +2,8 @@
 
 This repository contains Python scripts to analyze single molecule tracking (SMT) of HOPS condensates formed by DCP1A during hyperosmotic stress, ER docking analysis, and GEMs accessibility mapping.
 
-Please consider to cite: "ER tethering and active transport govern condensate diffusion during hyperosmotic stress" (Genome Biology, 2026)
+Please consider to cite: [https://doi.org/10.1101/2025.06.13.659610](https://doi.org/10.1101/2025.06.13.659610)
+
 
 ## Installation
 
