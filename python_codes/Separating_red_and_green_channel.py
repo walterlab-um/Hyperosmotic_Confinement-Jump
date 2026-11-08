@@ -12,6 +12,7 @@ if (selector != "1") & (selector != "2"):
 print("Choose the tif files for crop")
 lst_files = list(fd.askopenfilenames())
 #########################################
+
 # Apply registration and Crop
 
 # Previous version
