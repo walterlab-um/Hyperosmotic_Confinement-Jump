@@ -13,7 +13,7 @@ pd.options.mode.chained_assignment = None  # default='warn'
 ## By default, the tracks are already >= 5 frames, enough for the 3-points MSD-tau fitting.
 
 # scalling factors for physical units
-um_per_pixel = 0.117
+um_per_pixel = 0.097
 print("Please enter the s per frame for the video")
 s_per_frame = float(input())
 print(
